@@ -5,7 +5,6 @@ import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.response.ResponseHandler;
 import com.devsheila.ZerakiAPI.service.InstitutionService;
 
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +46,7 @@ public class InstitutionController {
 
     //GET SPECIFIC INSTITUITION
     @GetMapping("/{id}")
-    @ApiOperation(value ="Institutions id", notes="Provide institution details",response = ResponseEntity.class)
+//    @ApiOperation(value ="Institutions id", notes="Provide institution details",response = ResponseEntity.class)
     public ResponseEntity<Object> getInstitutionDetails(@PathVariable("id") Long id)
     {
         Institution institution=institutionService.getInstitution(id);

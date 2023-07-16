@@ -1,8 +1,14 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/zeraki?useSSL=false
+    url: jdbc:mysql://containers-us-west-2.railway.app:6718/railway?useSSL=false
     username: root
-    password:
+    password: wyz9c7RIHelDE9G8W3lM
+
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/zeraki?useSSL=false
+#    username: root
+#    password:
 
   mvc:
     pathmatch:

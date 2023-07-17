@@ -1,6 +1,22 @@
-# Spring Boot API Documentation
+#ZERAKI API
 
 This repository contains the documentation for a Spring Boot API that provides endpoints for managing institutions, courses, and students.
+
+## Getting Started
+
+To get started with the API, follow these steps:
+
+1. Clone this repository to your local machine.
+2. Install the required dependencies using Maven.
+3. Start the Spring Boot application.
+4. Access the API using the provided endpoints.
+
+
+## Technologies Used
+
+- Spring Boot
+- Java
+- Maven
 
 ## API Endpoints
 
@@ -33,32 +49,9 @@ The API exposes the following endpoints:
 - **PUT /students/{id}**: Edit a student by ID.
 - **PUT /students/{studentId}/course/{courseId}**: Change a student's course.
 
-### Other
-
-- **GET /v2/api-docs**: Retrieve the API documentation in JSON format.
-
-## Getting Started
-
-To get started with the API, follow these steps:
-
-1. Clone this repository to your local machine.
-2. Install the required dependencies using Maven.
-3. Start the Spring Boot application.
-4. Access the API using the provided endpoints.
-
-## Documentation
-
-For detailed information on each API endpoint, refer to the [API Documentation](/documentation) provided in this repository.
-
-## Technologies Used
-
-- Spring Boot
-- Java
-- Maven
-
 ## Contributors
 
-This API was developed by [Your Name](https://github.com/yourusername).
+This API was developed by [Your Name](https://github.com/devsheila).
 
 ## License
 

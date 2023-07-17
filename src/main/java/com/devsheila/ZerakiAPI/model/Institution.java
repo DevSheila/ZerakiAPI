@@ -32,10 +32,6 @@ public class Institution {
     @JsonIgnore
     private List<Course> courses;
 
-//    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL)
-//    private List<Student> students;
-
-    // Constructors
 
     public Institution() {
     }
@@ -88,15 +84,5 @@ public class Institution {
         this.courses = courses;
     }
 
-//    public List<Student> getStudents() {
-//        return students;
-//    }
-//
-//    public void setStudents(List<Student> students) {
-//        this.students = students;
-//    }
 
-    // Equals and HashCode
-
-    // toString
 }

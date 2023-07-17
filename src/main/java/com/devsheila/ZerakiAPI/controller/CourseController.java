@@ -8,6 +8,8 @@ import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.response.ResponseHandler;
 import com.devsheila.ZerakiAPI.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ public class CourseController {
         return ResponseHandler.responseBuilder("Courses for requested institution.", HttpStatus.OK, courseService.getAllCoursesByInstitution(institutionId));
     }
 
-    //CREATE AND ADD A COURSE TO AN INSTITUTION
+    //CREATE AND ADD A COURSE TO INSTITUTION
     @PostMapping("/institution/{institutionId}")
     public ResponseEntity<Object> createComment(@PathVariable(value = "institutionId") long institutionId,  @RequestBody CourseDto courseDto){
         ResponseBody responseBody=courseService.addCourseToInstitution(institutionId, courseDto);
@@ -89,5 +91,15 @@ public class CourseController {
         } else {
             return ResponseHandler.responseBuilder(responseBody.message, HttpStatus.BAD_REQUEST, responseBody.course);
         }
+    }
+
+    //GET COURSES BY INSTITUTIONS BY ID,SEARCH,SORT,FILTER
+    @GetMapping("/institutions/{institutionId}")
+    public ResponseEntity<Page<Course>> getCoursesByInstitution(
+            @PathVariable Long institutionId, Pageable pageable,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "ASC") String sort) {
+        Page<Course> courses = courseService.getCoursesByInstitution(institutionId, search, pageable, sort);
+        return ResponseEntity.ok(courses);
     }
 }

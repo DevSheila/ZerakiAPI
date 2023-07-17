@@ -8,6 +8,10 @@ import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.repository.CourseRepository;
 import com.devsheila.ZerakiAPI.repository.InstitutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
@@ -29,9 +33,13 @@ public class CourseService {
         this.institutionRepository = institutionRepository;
         this.mapper=mapper;
     }
+
+    //GET COURSE
     public Optional<Course> getCourse(Long institutionId, Long courseId) {
         return courseRepository.findByIdAndInstitutionId(courseId, institutionId);
     }
+
+    //GET ALL COURSES BY AN INSTITUTION
     public List<CourseDto> getAllCoursesByInstitution(Long institutionId) {
         // retrieve courses by institutionId
         List<Course> courses = courseRepository.findAllByInstitutionId(institutionId);
@@ -40,6 +48,8 @@ public class CourseService {
         return courses.stream().map(comment -> mapToDTO(comment)).collect(Collectors.toList());
 
     }
+
+    //GET A COURSE BY IT'S ID
     public CourseDto getCourseById(Long institutionId, Long courseId) {
         // retrieve post entity by id
         Course course = courseRepository.findById(courseId).get();
@@ -51,10 +61,12 @@ public class CourseService {
         return mapToDTO(course);
     }
 
+    //SARCH A COURSE
     public List<Course> searchCourses(String query) {
         return courseRepository.findByNameContainingIgnoreCase(query);
     }
 
+    //SORT THROUGH COURSES
     public List<Course> sortCourses(String order) {
         if (order.equalsIgnoreCase("asc")) {
             return courseRepository.findAllByOrderByNameAsc();
@@ -63,6 +75,7 @@ public class CourseService {
         }
     }
 
+    //ADD INSTITUTION
     public ResponseBody addInstitution(Institution institution) {
         ResponseBody responseBody;
 
@@ -77,6 +90,7 @@ public class CourseService {
     }
 
 
+    //ADD COURSE TO AN INSTITUTION
     public ResponseBody  addCourseToInstitution(Long institutionId, CourseDto courseDto)  {
 
         Course course = mapToEntity(courseDto);
@@ -93,6 +107,7 @@ public class CourseService {
 
 
 
+    //DELETE COURSE
     public boolean deleteCourse(Long courseId) {
         Optional<Course> course = courseRepository.findById(courseId);
 
@@ -106,6 +121,8 @@ public class CourseService {
     }
 
 
+
+    //UPDATE COURSE NAME
 
     public ResponseBody updateCourseName(Long id, String newName) {
         Optional<Course> courseOptional = courseRepository.findById(id);//find the course
@@ -125,6 +142,22 @@ public class CourseService {
         }
         return  new ResponseBody(false,"Course not found",(Course) null);
 
+    }
+
+
+    //GET,SORT,SEARCH COURSES
+    public Page<Course> getCoursesByInstitution(Long institutionId, String search, Pageable pageable, String sort) {
+        if (sort.equalsIgnoreCase("DESC")) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").descending());
+        } else {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name").ascending());
+        }
+
+        if (search != null && !search.isEmpty()) {
+            return courseRepository.findByInstitutionIdAndNameContainingIgnoreCase(institutionId, search, pageable);
+        } else {
+            return courseRepository.findByInstitutionId(institutionId, pageable);
+        }
     }
 
     private CourseDto mapToDTO(Course course){

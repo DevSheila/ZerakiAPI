@@ -2,6 +2,7 @@ package com.devsheila.ZerakiAPI.service;
 
 import com.devsheila.ZerakiAPI.exception.ResourceNotFoundException;
 import com.devsheila.ZerakiAPI.model.Course;
+import com.devsheila.ZerakiAPI.model.Institution;
 import com.devsheila.ZerakiAPI.model.Student;
 import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.payload.StudentDto;
@@ -10,6 +11,8 @@ import com.devsheila.ZerakiAPI.repository.InstitutionRepository;
 import com.devsheila.ZerakiAPI.repository.StudentRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,6 +31,7 @@ public class StudentService {
         this.modelMapper=modelMapper;
     }
 
+    //CREATE A STUDENT
     public StudentDto createStudent(long courseId, StudentDto studentDto) {
         Student student =mapToEntity(studentDto);
         // retrieve course entity by id
@@ -39,6 +43,7 @@ public class StudentService {
         return mapToDTO(newStudent);
     }
 
+    //DELETE A STUDENT
     public ResponseBody deleteStudent(Long id) {
       studentRepository.findById(id)
               .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
@@ -48,6 +53,7 @@ public class StudentService {
 
     }
 
+    //UPDATE STUDENT DETAILS
     public Student updateStudent(Long id, StudentDto studentDto) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
@@ -58,6 +64,7 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
+    //CGANHE STUDENT COURSE
     public ResponseBody changeCourse(Long id, Long courseId) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
@@ -74,6 +81,42 @@ public class StudentService {
             student.setCourse(course);
             return new ResponseBody(true,"Changed course successfully", studentRepository.save(student));
         }
+    }
+
+    //-List all students in each institution and be able to search. Be able to filter the list of
+    //students by course.
+    public Page<Student> getAllStudents(Pageable pageable ,Long institutionId, Long courseId, String query) {
+        if (institutionId != null && courseId != null) {
+            return studentRepository.findByCourseInstitutionIdAndCourseId(pageable, institutionId, courseId);
+        } else if (institutionId != null) {
+            return studentRepository.findByCourseInstitutionId(pageable, institutionId);
+        } else if (courseId != null) {
+            return studentRepository.findByCourseId(pageable, courseId);
+        }else if(query != null){
+           return studentRepository.findByNameContainingIgnoreCase(pageable,query);
+
+        }else {
+            return studentRepository.findAll(pageable);
+        }
+    }
+
+    //TRANSFER STUDENT INSTITUTION TO ANOTHER
+    public ResponseBody transferStudent(Long id, Long institutionId, Long courseId) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
+        Institution institution = institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution", "id", institutionId));
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course", "id", courseId));
+
+        if (!institution.getId().equals(course.getInstitution().getId())) {
+            return new ResponseBody(false, "Course not from the specified institution", (Student)null);
+        }
+
+        student.setCourse(course);
+        course.getStudentSet().add(student);
+        studentRepository.save(student);
+        return new ResponseBody(true, "Student transferred successfully", student);
     }
 
     private StudentDto mapToDTO(Student student){

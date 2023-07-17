@@ -6,6 +6,10 @@ import com.devsheila.ZerakiAPI.model.Institution;
 import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.repository.InstitutionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,7 @@ public class InstitutionService {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    //CREATE AN INSTITUTION
     public ResponseBody addInstitution(Institution institution) {
         ResponseBody responseBody;
 
@@ -30,10 +35,13 @@ public class InstitutionService {
         return responseBody;
     }
 
+    //GET ALL EXISTENT INSTITUTIONS
     public List<Institution> getAllInstitutions() {
         return institutionRepository.findAll();
     }
 
+
+    //GET INSTITUTION BY ID
     public Institution getInstitution(Long id) {
         Optional<Institution> institutionOptional = institutionRepository.findById(id);
 
@@ -45,11 +53,15 @@ public class InstitutionService {
         }
     }
 
+
+
+    //SEARCH INSTITUTTIONS BY A QUESRY
     public List<Institution> searchInstitutions(String query) {
         return institutionRepository.findByNameContainingIgnoreCase(query);
     }
 
 
+    //SORT INSTITUTION
     public List<Institution> sortInstitutions(String order) {
         if (order.equalsIgnoreCase("asc")) {
             return institutionRepository.findAllByOrderByNameAsc();
@@ -58,6 +70,23 @@ public class InstitutionService {
         }
     }
 
+    //UPDATE INSTITUTION NAME
+    public boolean updateInstitutionName(Long id, String newName) {
+        Optional<Institution> institutionOptional = institutionRepository.findById(id);//find current instituition
+        Institution institution = institutionOptional.get();
+
+        if (institution != null) {
+
+            if (institutionRepository.findByName(newName).isEmpty()) {//if no other institutions have the same name
+                institution.setName(newName);
+                institutionRepository.save(institution);
+                return true;
+            }
+        }
+        return false; // Another institution with the same name already exists
+    }
+
+    //DELETE AN INSTITUTION
     public boolean deleteInstitution(Long id) {
         Optional<Institution> institutionOptional = institutionRepository.findById(id);
         if (institutionOptional.isPresent()) {
@@ -70,20 +99,7 @@ public class InstitutionService {
         return false; // Cannot delete institution assigned to a course
     }
 
-    public boolean updateInstitutionName(Long id, String newName) {
-        Optional<Institution> institutionOptional = institutionRepository.findById(id);//find current instituition
-        Institution institution = institutionOptional.get();
 
-        if (institution != null) {
-
-                if (institutionRepository.findByName(newName).isEmpty()) {//if no other institutions have the same name
-                    institution.setName(newName);
-                    institutionRepository.save(institution);
-                    return true;
-                }
-        }
-        return false; // Another institution with the same name already exists
-    }
 
 
 

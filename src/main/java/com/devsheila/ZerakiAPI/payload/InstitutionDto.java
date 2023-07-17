@@ -11,7 +11,7 @@ import lombok.Data;
 public class InstitutionDto {
     private long id;
 
-    @Schema(description = "Blog Post Title")
+    @Schema(description = "Institution Title")
     private String name;
 
 }

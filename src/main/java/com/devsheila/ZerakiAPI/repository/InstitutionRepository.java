@@ -1,6 +1,8 @@
 package com.devsheila.ZerakiAPI.repository;
 
 import com.devsheila.ZerakiAPI.model.Institution;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,8 @@ public interface InstitutionRepository extends JpaRepository<Institution, Long> 
     List<Institution> findAllByOrderByNameAsc();
 
     List<Institution> findAllByOrderByNameDesc();
+
+
+
+
 }

@@ -1,11 +1,14 @@
 package com.devsheila.ZerakiAPI.controller;
 
+import com.devsheila.ZerakiAPI.model.Course;
 import com.devsheila.ZerakiAPI.model.Institution;
 import com.devsheila.ZerakiAPI.payload.ResponseBody;
 import com.devsheila.ZerakiAPI.response.ResponseHandler;
 import com.devsheila.ZerakiAPI.service.InstitutionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +19,10 @@ import java.util.List;
 @RequestMapping("/institutions")
 public class InstitutionController {
 
-    @Autowired
-    private InstitutionService institutionService;
 
+    private final InstitutionService institutionService;
+
+    @Autowired
     public InstitutionController(InstitutionService institutionService){
         this.institutionService=institutionService;
     }
@@ -59,12 +63,16 @@ public class InstitutionController {
 
 
 
+    //SEARCH INSTITUTION
     @GetMapping("/search")
     public ResponseEntity<Object> searchInstitutions(@RequestParam("query") String query) {
 
         return ResponseHandler.responseBuilder("Search results of "+query+" in institutions", HttpStatus.OK,institutionService.searchInstitutions(query));
     }
 
+
+
+    //SORT INSTITUTIONS BY DESC OR ASC
     @GetMapping("/sort")
     public ResponseEntity<Object> sortInstitutions(@RequestParam("order") String order) {
 
@@ -77,6 +85,7 @@ public class InstitutionController {
 
     }
 
+    //DELETE INSTITUTION BY ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteInstitution(@PathVariable("id") Long id) {
 
@@ -94,6 +103,8 @@ public class InstitutionController {
 
     }
 
+
+    //UPDATE INSTITUITION BY NAME
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateInstitutionName(@PathVariable("id") Long id, @RequestBody String newName) {
         //check if institution exists
@@ -110,10 +121,6 @@ public class InstitutionController {
             return ResponseHandler.responseBuilder("Instituition does not exist", HttpStatus.BAD_REQUEST, null);
 
         }
-
-
-
-
     }
 
 

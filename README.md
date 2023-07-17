@@ -10,7 +10,7 @@ To get started with the API, follow these steps:
 1. Clone the repository:
 
 ```shell
-git clone https://github.com/your/repository.git
+https://github.com/DevSheila/ZerakiAPI
 ```
 
 2. Navigate to the project directory:
